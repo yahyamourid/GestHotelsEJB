@@ -1,0 +1,111 @@
+<%@page import="entities.Ville"%>
+<%@page import="entities.Hotel"%>
+<%@page import="java.util.List"%>
+<%@ page import="com.google.gson.Gson"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graphique des Hôtels par Ville</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<%
+if (request.getAttribute("villes") == null && request.getAttribute("hotels") == null) {
+	response.sendRedirect("statsController");
+}
+List<Ville> villes = (List<Ville>) request.getAttribute("villes");
+List<Hotel> hotels = (List<Hotel>) request.getAttribute("hotels");
+%>
+<body class="flex justify-center items-center">
+	<%@include file="sidBar.jsp"%>
+	<canvas id="hotelChart" width="400" height="200"
+		class="w-2/3 h-1/2 ml-[160px]"></canvas>
+
+	<script>
+    var villes = <%=new Gson().toJson(villes)%>;
+    var hotels = <%=new Gson().toJson(hotels)%>;
+
+
+        // Préparation des données pour le graphique
+        var labels = [];
+        var data = [];
+
+        for (var i = 0; i < villes.length; i++) {
+            labels.push(villes[i].nom);
+            
+            var count = 0;
+            for (var j = 0; j < hotels.length; j++) {
+                if (hotels[j].ville.id === villes[i].id) {
+                    count++;
+                }
+            }
+            data.push(count);
+        }
+
+        
+        var ctx = document.getElementById('hotelChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Nombre d\'Hôtels par Ville',
+                    data: data,
+                    backgroundColor: [
+                        'rgba(255, 99, 132',
+                        'rgba(54, 162, 235',
+                        'rgba(255, 206, 86)',
+                        'rgba(75, 192, 192)',
+                        'rgba(153, 102, 255)',
+                        'rgba(255, 159, 64)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    
+                    borderWidth: 1
+                }]
+            },
+            options: {
+            	 legend: {
+                     display: false
+                 }, scales: {
+                     yAxes: [{
+                         scaleLabel: {
+                     display: true,
+                     labelString: 'Nombre d\'hotel',
+                     fontStyle: 'bold',
+                     fontSize: 15
+                 },
+                         ticks: {
+                             beginAtZero: true,
+                             stepSize: 1
+                         }
+                     }],
+                     xAxes: [{
+                 scaleLabel: {
+                     display: true,
+                     labelString: 'Les villes',
+                     fontStyle: 'bold',
+                     fontSize: 15
+                 },
+                 animation: {
+             duration: 4000,
+             easing: 'easeOutBack'
+         }
+                     } ]
+                
+            }
+        }});
+    </script>
+</body>
+</html>
