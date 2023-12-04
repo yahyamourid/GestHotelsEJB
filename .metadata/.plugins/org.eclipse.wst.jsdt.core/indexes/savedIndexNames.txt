@@ -1,8 +1,0 @@
-INDEX VERSION 1.4+C:\Users\HP\Desktop\JEE\EJB\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
-1969316856.index
-4102201085.index
-333272797.index
-379210750.index
-1978702156.index
-1347528930.index
-3714905558.index
